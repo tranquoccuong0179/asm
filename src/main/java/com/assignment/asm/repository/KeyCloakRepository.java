@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "identity-client", url = "http://localhost:8081")
+@FeignClient(name = "identity-client", url = "${idp.url}")
 public interface KeyCloakRepository {
     @PostMapping(value = "/realms/Assignment/protocol/openid-connect/token",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

@@ -4,6 +4,7 @@ import com.assignment.asm.dto.ApiResponse;
 import com.assignment.asm.dto.request.RegistrationRequest;
 import com.assignment.asm.dto.response.ProfileResponse;
 import com.assignment.asm.service.ProfileService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,9 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProfileController {
     ProfileService profileService;
+
     @PostMapping("/register")
+    @Operation(summary = "API đăng kí tài khoản mới")
     ApiResponse<ProfileResponse> register(@RequestBody @Valid RegistrationRequest request) {
         return ApiResponse.<ProfileResponse>builder()
                 .data(profileService.registration(request))

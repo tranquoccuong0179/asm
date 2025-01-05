@@ -27,11 +27,11 @@ public class ProfileServiceImpl implements ProfileService {
     ProfileRepository profileRepository;
     ProfileMapper profileMapper;
     KeyCloakRepository keyCloakRepository;
-    @Value("assignment_app")
+    @Value("${idp.client-id}")
     @NonFinal
     String clientId;
 
-    @Value("kN1t0hDYHBybDRNtjyITHw1NaMATnq83")
+    @Value("${idp.client-secret}")
     @NonFinal
     String clientSecret;
     @Override
@@ -53,8 +53,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         log.info("TokenInfo {}", token);
         // Create user with client Token and given info
-
-        // Get userId of keyCloak account
+        // Create user keycloak
         var creationResponse = keyCloakRepository.createUser(
                 "Bearer " + token.getAccessToken(),
                 UserCreationParam.builder()
@@ -72,6 +71,7 @@ public class ProfileServiceImpl implements ProfileService {
                         .build());
 
         String userId = extractUserId(creationResponse);
+        // Get userId of keyCloak account
         log.info("UserId {}", userId);
 
         var profile = profileMapper.toProfile(request);
