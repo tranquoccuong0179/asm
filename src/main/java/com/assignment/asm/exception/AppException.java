@@ -1,7 +1,5 @@
 package com.assignment.asm.exception;
 
-import ch.qos.logback.core.spi.ErrorCodes;
-
 public class AppException extends RuntimeException {
 
     public AppException(ErrorCode errorCode) {
