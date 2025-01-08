@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,6 +55,16 @@ public class ProfileController {
         return ApiResponse.<LoginResponse>builder()
                 .code(200)
                 .data(profileService.login(request))
+                .build();
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/delete/{id}")
+    @Operation(summary = "API đăng nhập tài khoản")
+    ApiResponse<Boolean> Delete(@PathVariable UUID id) {
+        return ApiResponse.<Boolean>builder()
+                .code(200)
+                .data(profileService.deleteProfile(id))
                 .build();
     }
 }

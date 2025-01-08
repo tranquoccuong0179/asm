@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -125,6 +126,25 @@ public class ProfileServiceImpl implements ProfileService {
         } catch (FeignException e) {
             throw errorNormalizer.handleKeyCloakException(e);
         }
+    }
+
+    @Override
+    public boolean deleteProfile(UUID id) {
+        var profile = profileRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        var token = keyCloakRepository.exchangeToken(TokenExchangeParam.builder()
+                .grant_type("client_credentials")
+                .client_id(clientId)
+                .client_secret(clientSecret)
+                .scope("openid")
+                .build());
+        var response = keyCloakRepository.deleteUser(
+                "Bearer " + token.getAccessToken(),
+                profile.getUserId());
+        profileRepository.delete(profile);
+        if (response == null) {
+            return false;
+        }
+        return true;
     }
 
     private String extractUserId(ResponseEntity<?> response){

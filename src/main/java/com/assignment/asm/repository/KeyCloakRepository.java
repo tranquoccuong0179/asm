@@ -9,9 +9,7 @@ import feign.QueryMap;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "identity-client", url = "${idp.url}")
 public interface KeyCloakRepository {
@@ -29,4 +27,9 @@ public interface KeyCloakRepository {
     ResponseEntity<?> createUser(
             @RequestHeader("authorization") String token,
             @RequestBody UserCreationParam param);
+
+    @DeleteMapping(value = "/admin/realms/Assignment/users/{userId}")
+    ResponseEntity<?> deleteUser(
+            @RequestHeader("authorization") String token,
+            @PathVariable("userId") String userId);
 }
