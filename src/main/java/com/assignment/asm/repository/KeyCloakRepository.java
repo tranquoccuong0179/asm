@@ -1,9 +1,7 @@
 package com.assignment.asm.repository;
 
-import com.assignment.asm.dto.keycloak.LoginRequestParam;
-import com.assignment.asm.dto.keycloak.TokenExchangeParam;
-import com.assignment.asm.dto.keycloak.TokenExchangeResponse;
-import com.assignment.asm.dto.keycloak.UserCreationParam;
+import com.assignment.asm.dto.keycloak.*;
+import com.assignment.asm.dto.request.UpdateUserRequest;
 import com.assignment.asm.dto.response.LoginResponse;
 import feign.QueryMap;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -32,4 +30,17 @@ public interface KeyCloakRepository {
     ResponseEntity<?> deleteUser(
             @RequestHeader("authorization") String token,
             @PathVariable("userId") String userId);
+
+    @PutMapping(value = "/admin/realms/Assignment/users/{userId}")
+    ResponseEntity<?> updateUser(
+            @RequestHeader("authorization") String token,
+            @PathVariable("userId") String userId,
+            @RequestBody UpdateRequestParam request);
+
+    @PutMapping(value = "/admin/realms/Assignment/users/{userId}/reset-password")
+    ResponseEntity<?> changePassword(
+            @RequestHeader("authorization") String token,
+            @PathVariable("userId") String userId,
+            @RequestBody Credential request);
+
 }

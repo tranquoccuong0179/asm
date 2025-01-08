@@ -1,10 +1,13 @@
 package com.assignment.asm.controller;
 
 import com.assignment.asm.dto.ApiResponse;
+import com.assignment.asm.dto.request.ChangePasswordRequest;
 import com.assignment.asm.dto.request.LoginRequest;
 import com.assignment.asm.dto.request.RegistrationRequest;
+import com.assignment.asm.dto.request.UpdateUserRequest;
 import com.assignment.asm.dto.response.LoginResponse;
 import com.assignment.asm.dto.response.ProfileResponse;
+import com.assignment.asm.dto.response.UpdateUserResponse;
 import com.assignment.asm.service.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -60,11 +63,29 @@ public class ProfileController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    @Operation(summary = "API đăng nhập tài khoản")
+    @Operation(summary = "API xóa tài khoản")
     ApiResponse<Boolean> Delete(@PathVariable UUID id) {
         return ApiResponse.<Boolean>builder()
                 .code(200)
                 .data(profileService.deleteProfile(id))
+                .build();
+    }
+
+    @PutMapping("/update")
+    @Operation(summary = "API thay đổi thông tin người dùng")
+    ApiResponse<UpdateUserResponse> Delete(@RequestBody @Valid UpdateUserRequest request) {
+        return ApiResponse.<UpdateUserResponse>builder()
+                .code(200)
+                .data(profileService.updateUser(request))
+                .build();
+    }
+
+    @PutMapping("/change-password")
+    @Operation(summary = "API thay đổi mật khẩu người dùng")
+    ApiResponse<Boolean> Delete(@RequestBody ChangePasswordRequest password) {
+        return ApiResponse.<Boolean>builder()
+                .code(200)
+                .data(profileService.changePassword(password))
                 .build();
     }
 }

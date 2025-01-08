@@ -1,13 +1,13 @@
 package com.assignment.asm.service;
 
-import com.assignment.asm.dto.keycloak.Credential;
-import com.assignment.asm.dto.keycloak.LoginRequestParam;
-import com.assignment.asm.dto.keycloak.TokenExchangeParam;
-import com.assignment.asm.dto.keycloak.UserCreationParam;
+import com.assignment.asm.dto.keycloak.*;
+import com.assignment.asm.dto.request.ChangePasswordRequest;
 import com.assignment.asm.dto.request.LoginRequest;
 import com.assignment.asm.dto.request.RegistrationRequest;
+import com.assignment.asm.dto.request.UpdateUserRequest;
 import com.assignment.asm.dto.response.LoginResponse;
 import com.assignment.asm.dto.response.ProfileResponse;
+import com.assignment.asm.dto.response.UpdateUserResponse;
 import com.assignment.asm.exception.AppException;
 import com.assignment.asm.exception.ErrorCode;
 import com.assignment.asm.exception.ErrorNormalizer;
@@ -141,6 +141,67 @@ public class ProfileServiceImpl implements ProfileService {
                 "Bearer " + token.getAccessToken(),
                 profile.getUserId());
         profileRepository.delete(profile);
+        if (response == null) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public UpdateUserResponse updateUser(UpdateUserRequest request) {
+        try {
+            String userId = AuthenUtil.getProfileId();
+            var profile = profileRepository.findByUserId(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+            var token = keyCloakRepository.exchangeToken(TokenExchangeParam.builder()
+                    .grant_type("client_credentials")
+                    .client_id(clientId)
+                    .client_secret(clientSecret)
+                    .scope("openid")
+                    .build());
+            var response = keyCloakRepository.updateUser(
+                    "Bearer " + token.getAccessToken(),
+                    userId,
+                    UpdateRequestParam.builder()
+                            .email(request.getEmail())
+                            .firstName(request.getFirstName())
+                            .lastName(request.getLastName())
+                            .build());
+            if (response == null) {
+                throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            }
+            profile.setFirstName(request.getFirstName());
+            profile.setLastName(request.getLastName());
+            profile.setEmail(request.getEmail());
+            profile.setAddress(request.getAddress());
+            profile.setDob(request.getDob());
+            profile.setPhone(request.getPhone());
+//            profile = profileMapper.toUpdateProfile(request);
+            profileRepository.save(profile);
+            return profileMapper.toUpdateUserResponse(profile);
+        }catch (FeignException exception){
+            throw errorNormalizer.handleKeyCloakException(exception);
+        }
+    }
+
+    @Override
+    public boolean changePassword(ChangePasswordRequest newPassword) {
+        String userId = AuthenUtil.getProfileId();
+        var profile = profileRepository.findByUserId(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        System.out.println(userId);
+        var token = keyCloakRepository.exchangeToken(TokenExchangeParam.builder()
+                .grant_type("client_credentials")
+                .client_id(clientId)
+                .client_secret(clientSecret)
+                .scope("openid")
+                .build());
+        var response = keyCloakRepository.changePassword(
+                "Bearer " + token.getAccessToken(),
+                userId,
+                Credential.builder()
+                        .type("password")
+                        .temporary(false)
+                        .value(newPassword.getNewPassword())
+                        .build());
         if (response == null) {
             return false;
         }
