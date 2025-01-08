@@ -1,9 +1,12 @@
 package com.assignment.asm.service;
 
 import com.assignment.asm.dto.keycloak.Credential;
+import com.assignment.asm.dto.keycloak.LoginRequestParam;
 import com.assignment.asm.dto.keycloak.TokenExchangeParam;
 import com.assignment.asm.dto.keycloak.UserCreationParam;
+import com.assignment.asm.dto.request.LoginRequest;
 import com.assignment.asm.dto.request.RegistrationRequest;
+import com.assignment.asm.dto.response.LoginResponse;
 import com.assignment.asm.dto.response.ProfileResponse;
 import com.assignment.asm.exception.AppException;
 import com.assignment.asm.exception.ErrorCode;
@@ -100,6 +103,28 @@ public class ProfileServiceImpl implements ProfileService {
         String profileId = AuthenUtil.getProfileId();
         Profile profile = profileRepository.findByUserId(profileId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return profileMapper.toProfileResponse(profile);
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+        try {
+            var token = keyCloakRepository.exchangeToken(LoginRequestParam.builder()
+                    .grant_type("password")
+                    .client_id(clientId)
+                    .client_secret(clientSecret)
+                    .username(request.getUsername())
+                    .password(request.getPassword())
+                    .scope("openid")
+                    .build());
+
+            return LoginResponse.builder()
+                    .accessToken(token.getAccessToken())
+                    .refreshToken(token.getRefreshToken())
+                    .username(request.getUsername())
+                    .build();
+        } catch (FeignException e) {
+            throw errorNormalizer.handleKeyCloakException(e);
+        }
     }
 
     private String extractUserId(ResponseEntity<?> response){

@@ -1,7 +1,9 @@
 package com.assignment.asm.controller;
 
 import com.assignment.asm.dto.ApiResponse;
+import com.assignment.asm.dto.request.LoginRequest;
 import com.assignment.asm.dto.request.RegistrationRequest;
+import com.assignment.asm.dto.response.LoginResponse;
 import com.assignment.asm.dto.response.ProfileResponse;
 import com.assignment.asm.service.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,6 +45,15 @@ public class ProfileController {
     ApiResponse<ProfileResponse> getUserProfiles() {
         return ApiResponse.<ProfileResponse>builder()
                 .data(profileService.getProfileById())
+                .build();
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "API đăng nhập tài khoản")
+    ApiResponse<LoginResponse> Login(@RequestBody LoginRequest request) {
+        return ApiResponse.<LoginResponse>builder()
+                .code(200)
+                .data(profileService.login(request))
                 .build();
     }
 }

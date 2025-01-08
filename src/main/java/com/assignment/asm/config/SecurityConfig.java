@@ -18,7 +18,8 @@ public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS =
             {"/register",
             "/swagger-ui/**",
-            "/v3/api-docs/**",};
+            "/v3/api-docs/**",
+            "/login",};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
