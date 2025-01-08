@@ -5,21 +5,27 @@ import com.assignment.asm.dto.keycloak.TokenExchangeParam;
 import com.assignment.asm.dto.keycloak.UserCreationParam;
 import com.assignment.asm.dto.request.RegistrationRequest;
 import com.assignment.asm.dto.response.ProfileResponse;
+import com.assignment.asm.exception.AppException;
+import com.assignment.asm.exception.ErrorCode;
 import com.assignment.asm.exception.ErrorNormalizer;
 import com.assignment.asm.mapper.ProfileMapper;
+import com.assignment.asm.model.Profile;
 import com.assignment.asm.repository.KeyCloakRepository;
 import com.assignment.asm.repository.ProfileRepository;
+import com.assignment.asm.utils.AuthenUtil;
 import feign.FeignException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -87,6 +93,13 @@ public class ProfileServiceImpl implements ProfileService {
         }catch (FeignException exception){
             throw errorNormalizer.handleKeyCloakException(exception);
         }
+    }
+
+    @Override
+    public ProfileResponse getProfileById() {
+        String profileId = AuthenUtil.getProfileId();
+        Profile profile = profileRepository.findByUserId(profileId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return profileMapper.toProfileResponse(profile);
     }
 
     private String extractUserId(ResponseEntity<?> response){

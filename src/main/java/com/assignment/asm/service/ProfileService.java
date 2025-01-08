@@ -8,4 +8,5 @@ import java.util.List;
 public interface ProfileService {
     public List<ProfileResponse> getAllProfiles();
     public ProfileResponse registration(RegistrationRequest request);
+    public ProfileResponse getProfileById();
 }

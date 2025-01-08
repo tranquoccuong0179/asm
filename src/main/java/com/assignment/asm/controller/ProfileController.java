@@ -10,10 +10,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,9 +31,18 @@ public class ProfileController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/profiles")
+    @Operation(summary = "API xem tất cả người dùng trong hệ thống giành cho admin")
     ApiResponse<List<ProfileResponse>> getAllProfiles() {
         return ApiResponse.<List<ProfileResponse>>builder()
                 .data(profileService.getAllProfiles())
+                .build();
+    }
+
+    @GetMapping("/profile")
+    @Operation(summary = "API xem profile của người dùng")
+    ApiResponse<ProfileResponse> getUserProfiles() {
+        return ApiResponse.<ProfileResponse>builder()
+                .data(profileService.getProfileById())
                 .build();
     }
 }
