@@ -12,13 +12,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class RegistrationRequest {
-    private String name;
     private String email;
-    private String phone;
-    private String address;
     private String username;
     private String firstName;
     private String password;
     private String lastName;
-    private LocalDate dob;
 }

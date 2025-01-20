@@ -12,16 +12,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProfileResponse {
+public class UserResponse {
     private String id;
-    private String userId;
-    private String name;
     private String email;
-    private String phone;
-    private String address;
     private String username;
     private String firstName;
     private String lastName;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate dob;
 }

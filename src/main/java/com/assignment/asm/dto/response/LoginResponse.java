@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class LoginResponse {
-    private String username;
     private String accessToken;
     private String refreshToken;
 }

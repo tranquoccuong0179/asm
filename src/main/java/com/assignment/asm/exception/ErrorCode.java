@@ -16,7 +16,8 @@ public enum ErrorCode {
     EMAIL_EXISTED(1009, "Email existed", HttpStatus.BAD_REQUEST),
     USERNAME_IS_MISSING(1009, "Username is empty", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(1010, "User not found", HttpStatus.NOT_FOUND),
-    INVALID_CREDENTIALS(1011, "Invalid credentials", HttpStatus.BAD_REQUEST),;
+    INVALID_CREDENTIALS(1011, "Invalid credentials", HttpStatus.BAD_REQUEST),
+    INVALID_USERNAME_PASSWORD(1012, "Invalid username or password", HttpStatus.BAD_REQUEST),;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

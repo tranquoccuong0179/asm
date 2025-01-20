@@ -6,9 +6,9 @@ import com.assignment.asm.dto.request.LoginRequest;
 import com.assignment.asm.dto.request.RegistrationRequest;
 import com.assignment.asm.dto.request.UpdateUserRequest;
 import com.assignment.asm.dto.response.LoginResponse;
-import com.assignment.asm.dto.response.ProfileResponse;
+import com.assignment.asm.dto.response.UserResponse;
 import com.assignment.asm.dto.response.UpdateUserResponse;
-import com.assignment.asm.service.ProfileService;
+import com.assignment.asm.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -18,37 +18,39 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ProfileController {
-    ProfileService profileService;
+public class UserController {
+    UserService userService;
 
 
     @PostMapping("/register")
     @Operation(summary = "API đăng kí tài khoản mới")
-    ApiResponse<ProfileResponse> register(@RequestBody @Valid RegistrationRequest request) {
-        return ApiResponse.<ProfileResponse>builder()
-                .data(profileService.registration(request))
+    ApiResponse<UserResponse> register(@RequestBody @Valid RegistrationRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .code(200)
+                .data(userService.registration(request))
                 .build();
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/profiles")
     @Operation(summary = "API xem tất cả người dùng trong hệ thống giành cho admin")
-    ApiResponse<List<ProfileResponse>> getAllProfiles() {
-        return ApiResponse.<List<ProfileResponse>>builder()
-                .data(profileService.getAllProfiles())
+    ApiResponse<List<UserResponse>> getAllProfiles() {
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(200)
+                .data(userService.getAllProfiles())
                 .build();
     }
 
     @GetMapping("/profile")
     @Operation(summary = "API xem profile của người dùng")
-    ApiResponse<ProfileResponse> getUserProfiles() {
-        return ApiResponse.<ProfileResponse>builder()
-                .data(profileService.getProfileById())
+    ApiResponse<UserResponse> getUserProfiles() {
+        return ApiResponse.<UserResponse>builder()
+                .code(200)
+                .data(userService.getProfileById())
                 .build();
     }
 
@@ -57,17 +59,17 @@ public class ProfileController {
     ApiResponse<LoginResponse> Login(@RequestBody LoginRequest request) {
         return ApiResponse.<LoginResponse>builder()
                 .code(200)
-                .data(profileService.login(request))
+                .data(userService.login(request))
                 .build();
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "API xóa tài khoản")
-    ApiResponse<Boolean> Delete(@PathVariable UUID id) {
+    ApiResponse<Boolean> Delete(@PathVariable Long id) {
         return ApiResponse.<Boolean>builder()
                 .code(200)
-                .data(profileService.deleteProfile(id))
+                .data(userService.deleteProfile(id))
                 .build();
     }
 
@@ -76,7 +78,7 @@ public class ProfileController {
     ApiResponse<UpdateUserResponse> Delete(@RequestBody @Valid UpdateUserRequest request) {
         return ApiResponse.<UpdateUserResponse>builder()
                 .code(200)
-                .data(profileService.updateUser(request))
+                .data(userService.updateUser(request))
                 .build();
     }
 
@@ -85,7 +87,7 @@ public class ProfileController {
     ApiResponse<Boolean> Delete(@RequestBody ChangePasswordRequest password) {
         return ApiResponse.<Boolean>builder()
                 .code(200)
-                .data(profileService.changePassword(password))
+                .data(userService.changePassword(password))
                 .build();
     }
 }
